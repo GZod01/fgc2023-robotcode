@@ -67,12 +67,12 @@ public class DualDrive extends LinearOpMode {
 
 
             g2x = gamepad1.right_stick_x;
-            Robot.moves(x,y,flm, frm,blm,brm);
-            Robot.Rotation(g2x, flm, frm, blm, brm);
+            WRRobot.moves(x,y,flm, frm,blm,brm);
+            WRRobot.Rotation(g2x, flm, frm, blm, brm);
         }
     }
 }
-public class Robot{
+public class WRRobot{
         public static void moves(float x, double y, DcMotor flm, DcMotor frm, DcMotor blm, DcMotor brm){
                 float approx = 0.15;
                 boolean xnozero = (x<-approx || x>approx);
@@ -82,12 +82,12 @@ public class Robot{
                         //DO TRANSLATIONS
                         if(xnozero){
                                 if(ynozzero){
-                                        Robot.diagonal(x,y, flm,frm,blm,brm);
+                                        WRRobot.diagonal(x,y, flm,frm,blm,brm);
                                 }else{
-                                        Robot.horizontal(x,flm,frm,blm,brm);
+                                        WRRobot.horizontal(x,flm,frm,blm,brm);
                                 }
                         }else{
-                                Robot.vertical(y,flm,frm,blm,brm);
+                                WRRobot.vertical(y,flm,frm,blm,brm);
                         }
                 }
                 else{
@@ -103,28 +103,28 @@ public class Robot{
                 if(x>0){
                         if(y>0){
                                 // North East
-                                Robot.movement(flm,frm,blm,brm,new int[]{1,0,0,1});
+                                WRRobot.movement(flm,frm,blm,brm,new int[]{1,0,0,1});
 
                         }else{
                                 //South East
-                                Robot.movement(flm,frm,blm,brm,new int[]{0,-1,-1,0});
+                                WRRobot.movement(flm,frm,blm,brm,new int[]{0,-1,-1,0});
                         }
                 }else{
                         if(y>0){
                                 //North West
-                                Robot.movement(flm,frm,blm,brm,new int[]{0,1,1,0});
+                                WRRobot.movement(flm,frm,blm,brm,new int[]{0,1,1,0});
                         }
                         else{
                                 //South West
-                                Robot.movement(flm,frm,blm,brm,new int[]{-1,0,0,-1});
+                                WRRobot.movement(flm,frm,blm,brm,new int[]{-1,0,0,-1});
                         }
                 }
         }
         public static void horizontal(float x,DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
                 if(x>0){
-                        Robot.movement(flm,frm,blm,brm,new int[]{1,-1,-1,1});
+                        WRRobot.movement(flm,frm,blm,brm,new int[]{1,-1,-1,1});
                 }else{
-                        Robot.movement(flm,frm,blm,brm,new int[]{-1,1,1,-1});
+                        WRRobot.movement(flm,frm,blm,brm,new int[]{-1,1,1,-1});
                 }
 
 
@@ -132,9 +132,9 @@ public class Robot{
         }
         public static void vertical(double y,DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
                 if(y>0){
-                        Robot.movement(flm,frm,blm,brm,new int[]{1,1,1,1});
+                        WRRobot.movement(flm,frm,blm,brm,new int[]{1,1,1,1});
                 }else{
-                        Robot.movement(flm,frm,blm,brm,new int[]{-1,-1,-1,-1});
+                        WRRobot.movement(flm,frm,blm,brm,new int[]{-1,-1,-1,-1});
                 }
 
         }
@@ -149,9 +149,9 @@ public class Robot{
                 boolean xnozero = (g2x<-approx || g2x>approx);
                 if(xnozero){
                         if(x>0){
-                                Robot.movement(flm,frm,blm,brm,new int[]{1,-1,1,-1});
+                                WRRobot.movement(flm,frm,blm,brm,new int[]{1,-1,1,-1});
                         }else{
-                                Robot.movement(flm,frm,blm,brm,new int[]{-1,1,-1,1});
+                                WRRobot.movement(flm,frm,blm,brm,new int[]{-1,1,-1,1});
                         }
                 }
         }
