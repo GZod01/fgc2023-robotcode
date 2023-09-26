@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name="WeRobot: FGC2023 OpMode", group="WeRobot")
-public class DualDrive extends LinearOpMode {
+public class WeRobot_FGC2023_GZod01 extends LinearOpMode {
   private DcMotor flm;
   private DcMotor frm;
   private DcMotor brm;
@@ -38,13 +38,13 @@ public class DualDrive extends LinearOpMode {
         while (opModeIsActive()) {
             x = gamepad1.left_stick_x;
             y = -gamepad1.left_stick_y;
-            a = gamepad1.a;
+            ga = gamepad1.a;
             gy = gamepad1.y;
-            if(a & !preva){
+            if(ga & !preva){
                     ismoissonactive=!ismoissonactive;
                     preva=true;
             }
-            if(!a & preva){
+            if(!ga & preva){
                     preva =false;
             }
             if(ismoissonactive){
@@ -52,7 +52,7 @@ public class DualDrive extends LinearOpMode {
             }else{
                     moissonmotor.setPower(0);
             }
-            if(y){
+            if(gy){
                     launchermotor.setPower(1);
             }else{
                     launchermotor.setPower(0);
@@ -72,16 +72,16 @@ public class DualDrive extends LinearOpMode {
         }
     }
 }
-public class WRRobot{
+class WRRobot{
         public static void moves(float x, double y, DcMotor flm, DcMotor frm, DcMotor blm, DcMotor brm){
-                float approx = 0.15;
+                double approx = 0.15;
                 boolean xnozero = (x<-approx || x>approx);
                 boolean ynozero = (y<-approx || y>approx);
 
                 if((xnozero & ynozero) || (xnozero || ynozero)){
                         //DO TRANSLATIONS
                         if(xnozero){
-                                if(ynozzero){
+                                if(ynozero){
                                         WRRobot.diagonal(x,y, flm,frm,blm,brm);
                                 }else{
                                         WRRobot.horizontal(x,flm,frm,blm,brm);
@@ -144,11 +144,11 @@ public class WRRobot{
                 blm.setPower(list[2]);
                 brm.setPower(list[3]);
         }
-        public static void Rotations(float g2x, DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
-                float approx = 0.15;
+        public static void Rotation(float g2x, DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
+                double approx = 0.15;
                 boolean xnozero = (g2x<-approx || g2x>approx);
                 if(xnozero){
-                        if(x>0){
+                        if(g2x>0){
                                 WRRobot.movement(flm,frm,blm,brm,new int[]{1,-1,1,-1});
                         }else{
                                 WRRobot.movement(flm,frm,blm,brm,new int[]{-1,1,-1,1});
