@@ -103,28 +103,28 @@ public class Robot{
                 if(x>0){
                         if(y>0){
                                 // North East
-                                Robot.movement(flm,frm,blm,brm,{1,0,0,1});
+                                Robot.movement(flm,frm,blm,brm,new int[]{1,0,0,1});
 
                         }else{
                                 //South East
-                                Robot.movement(flm,frm,blm,brm,{0,-1,-1,0});
+                                Robot.movement(flm,frm,blm,brm,new int[]{0,-1,-1,0});
                         }
                 }else{
                         if(y>0){
                                 //North West
-                                Robot.movement(flm,frm,blm,brm,{0,1,1,0});
+                                Robot.movement(flm,frm,blm,brm,new int[]{0,1,1,0});
                         }
                         else{
                                 //South West
-                                Robot.movement(flm,frm,blm,brm,{-1,0,0,-1});
+                                Robot.movement(flm,frm,blm,brm,new int[]{-1,0,0,-1});
                         }
                 }
         }
         public static void horizontal(float x,DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
                 if(x>0){
-                        Robot.movement(flm,frm,blm,brm,{1,-1,-1,1});
+                        Robot.movement(flm,frm,blm,brm,new int[]{1,-1,-1,1});
                 }else{
-                        Robot.movement(flm,frm,blm,brm,;{-1,1,1,-1});
+                        Robot.movement(flm,frm,blm,brm,new int[]{-1,1,1,-1});
                 }
 
 
@@ -132,9 +132,9 @@ public class Robot{
         }
         public static void vertical(double y,DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
                 if(y>0){
-                        Robot.movement(flm,frm,blm,brm,{1,1,1,1});
+                        Robot.movement(flm,frm,blm,brm,new int[]{1,1,1,1});
                 }else{
-                        Robot.movement(flm,frm,blm,brm,{-1,-1,-1,-1});
+                        Robot.movement(flm,frm,blm,brm,new int[]{-1,-1,-1,-1});
                 }
 
         }
@@ -149,9 +149,9 @@ public class Robot{
                 boolean xnozero = (g2x<-approx || g2x>approx);
                 if(xnozero){
                         if(x>0){
-                                Robot.movement(flm,frm,blm,brm,{1,-1,1,-1});
+                                Robot.movement(flm,frm,blm,brm,new int[]{1,-1,1,-1});
                         }else{
-                                Robot.movement(flm,frm,blm,brm,{-1,1,-1,1});
+                                Robot.movement(flm,frm,blm,brm,new int[]{-1,1,-1,1});
                         }
                 }
         }
