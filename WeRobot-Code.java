@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="WeRobot: FGC2023 OpMode", group="WeRobot")
+@TeleOp(name="WeRobot: FGC2023", group="WeRobot")
 public class WeRobot_FGC2023_GZod01 extends LinearOpMode {
   private DcMotor flm;
   private DcMotor frm;
@@ -33,6 +33,7 @@ public class WeRobot_FGC2023_GZod01 extends LinearOpMode {
         moissonmotor = hardwareMap.get(DcMotor.class, "msn");
         launchermotor = hardwareMap.get(DcMotor.class, "lnc");
         mountmotor = hardwareMap.get(DcMotor.class, "mnt");
+        WRRobot wr = new WRRobot(flm,frm,blm,brm);
         waitForStart();
 
         while (opModeIsActive()) {
@@ -67,92 +68,108 @@ public class WeRobot_FGC2023_GZod01 extends LinearOpMode {
 
 
             g2x = gamepad1.right_stick_x;
-            WRRobot.moves(x,y,flm, frm,blm,brm);
-            WRRobot.Rotation(g2x, flm, frm, blm, brm);
+            wr.moves(x,y );
+            wr.Rotation(g2x );
         }
     }
 }
 class WRRobot{
-        public static void moves(float x, double y, DcMotor flm, DcMotor frm, DcMotor blm, DcMotor brm){
+        private DcMotor flm;
+        private DcMotor frm;
+        private DcMotor blm;
+        private DcMotor brm;
+        public WRRobot(DcMotor cflm,DcMotor cfrm,DcMotor cblm,DcMotor cbrm){
+                flm = cflm;
+                frm = cfrm;
+                blm = cblm;
+                brm = cbrm;
+        }
+        public  void moves(float x, double y){
                 double approx = 0.15;
                 boolean xnozero = (x<-approx || x>approx);
                 boolean ynozero = (y<-approx || y>approx);
 
-                if((xnozero & ynozero) || (xnozero || ynozero)){
-                        //DO TRANSLATIONS
-                        if(xnozero){
-                                if(ynozero){
-                                        WRRobot.diagonal(x,y, flm,frm,blm,brm);
-                                }else{
-                                        WRRobot.horizontal(x,flm,frm,blm,brm);
-                                }
-                        }else{
-                                WRRobot.vertical(y,flm,frm,blm,brm);
-                        }
-                }
-                else{
-                        // NO TRANSLATIONS BECAUSE 0 SO STOP
+                if(!(Math.abs(x)>approx || Math.abs(y)>approx)){
                         flm.setPower(0);
                         frm.setPower(0);
                         blm.setPower(0);
                         brm.setPower(0);
+                        return;
+                }
+
+                //DO TRANSLATIONS
+                if(Math.abs(x)>approx){
+                        if(Math.abs(y)>approx){
+                                diagonal(x,y);
+                        }else{
+                                horizontal(x);
+                        }
+                }else{
+                        vertical(y);
                 }
 
         }
-        public static void diagonal(float x, double y, DcMotor flm, DcMotor frm,DcMotor blm,DcMotor brm){
+        public void diagonal(float x, double y){
+                double pow = Math.abs(x+y)/2;
                 if(x>0){
                         if(y>0){
                                 // North East
-                                WRRobot.movement(flm,frm,blm,brm,new int[]{1,0,0,1});
+                                movement(new double[]{pow,0,0,-pow});
 
                         }else{
                                 //South East
-                                WRRobot.movement(flm,frm,blm,brm,new int[]{0,-1,-1,0});
+                                movement(new double[]{0,pow,-pow,0});
                         }
                 }else{
                         if(y>0){
                                 //North West
-                                WRRobot.movement(flm,frm,blm,brm,new int[]{0,1,1,0});
+                                movement(new double[]{0,-pow,pow,0});
                         }
                         else{
                                 //South West
-                                WRRobot.movement(flm,frm,blm,brm,new int[]{-1,0,0,-1});
+                                movement(new double[]{-pow,0,0,pow});
                         }
                 }
         }
-        public static void horizontal(float x,DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
+        public  void horizontal(float x){
+                double pow = Math.abs(x);
                 if(x>0){
-                        WRRobot.movement(flm,frm,blm,brm,new int[]{1,-1,-1,1});
+                        movement(new double[]{pow,pow,-pow,-pow});
                 }else{
-                        WRRobot.movement(flm,frm,blm,brm,new int[]{-1,1,1,-1});
+                        movement(new double[]{-pow,-pow,pow,pow});
                 }
 
 
 
         }
-        public static void vertical(double y,DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
+        public  void vertical(double y){
+                double pow = Math.abs(y);
                 if(y>0){
-                        WRRobot.movement(flm,frm,blm,brm,new int[]{1,1,1,1});
+                        movement(new double[]{pow,-pow,pow,-pow});
                 }else{
-                        WRRobot.movement(flm,frm,blm,brm,new int[]{-1,-1,-1,-1});
+                        movement(new double[]{pow,-pow,pow,-pow});
                 }
 
         }
-        public static void movement(DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm,int[] list){
+        public  void movement(double[] list){
                 flm.setPower(list[0]);
                 frm.setPower(list[1]);
                 blm.setPower(list[2]);
                 brm.setPower(list[3]);
         }
-        public static void Rotation(float g2x, DcMotor flm,DcMotor frm,DcMotor blm,DcMotor brm){
+
+        /*
+         * @param g2x is the x coordinates of the right joystick
+         */
+        public  void Rotation(float g2x){
                 double approx = 0.15;
                 boolean xnozero = (g2x<-approx || g2x>approx);
-                if(xnozero){
-                        if(g2x>0){
-                                WRRobot.movement(flm,frm,blm,brm,new int[]{1,-1,1,-1});
-                        }else{
-                                WRRobot.movement(flm,frm,blm,brm,new int[]{-1,1,-1,1});
-                        }
+                double pow = Math.abs(g2x);
+                if (!xnozero) return;
+                if (g2x > 0) {
+                        movement(new double[]{pow,pow,pow,pow});
+                } else {
+                        movement(new double[]{-pow,-pow,-pow,-pow});
                 }
         }
 
