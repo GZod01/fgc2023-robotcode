@@ -147,7 +147,7 @@ class WRRobot{
                 if(y>0){
                         movement(new double[]{pow,-pow,pow,-pow});
                 }else{
-                        movement(new double[]{pow,-pow,pow,-pow});
+                        movement(new double[]{-pow,pow,-pow,pow});
                 }
 
         }
@@ -169,7 +169,7 @@ class WRRobot{
                 if (g2x > 0) {
                         movement(new double[]{pow,pow,pow,pow});
                 } else {
-                        movement(new double[]{-pow,-pow,-pow,-pow});
+                        movement(new double[]{-pow,-pow,-pow,pow});
                 }
         }
 
