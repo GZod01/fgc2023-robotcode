@@ -8,70 +8,104 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name="WeRobot: FGC2023", group="WeRobot")
-public class WeRobot_FGC2023_GZod01 extends LinearOpMode {
-  private DcMotor flm;
-  private DcMotor frm;
-  private DcMotor brm;
-  private DcMotor blm;
-  private DcMotor moissonmotor;
-  private DcMotor launchermotor;
-  private DcMotor mountmotor;
+public class WeRobot_FGC2023 extends LinearOpMode {
+        private DcMotor flm;
+        private DcMotor frm;
+        private DcMotor brm;
+        private DcMotor blm;
+        // OTHER THAN MOVES:
+        // lanceur = panier
+        private DcMotor lanceur = null;
+        private DcMotor moissoneuse = null;
+        private DcMotor accroche = null;
+        private double puissanceMoissoneuse = 0;
+        private boolean lanceurEnRoute = false;
+        private boolean dejavu = false;
+        private boolean modeFrein = false;
+        private boolean moissoneuseEnRoute = false;
+        private boolean dejavuM = false;
 
-  @Override
-  public void runOpMode() {
-        float x;
-        double y;
-        float g2x;
-        boolean ismoissonactive=false;
-        boolean ga;
-        boolean gy;
-        boolean preva =false;
-        flm = hardwareMap.get(DcMotor.class, "flm");
-        frm = hardwareMap.get(DcMotor.class, "frm");
-        blm = hardwareMap.get(DcMotor.class, "blm");
-        brm = hardwareMap.get(DcMotor.class, "brm");
-        moissonmotor = hardwareMap.get(DcMotor.class, "msn");
-        launchermotor = hardwareMap.get(DcMotor.class, "lnc");
-        mountmotor = hardwareMap.get(DcMotor.class, "mnt");
-        WRRobot wr = new WRRobot(flm,frm,blm,brm);
-        waitForStart();
+        @Override
+        public void runOpMode() {
+                float x;
+                double y;
+                float g2x;
+                telemetry.addData("Status", "Initialized");
+                telemetry.update();
+                flm = hardwareMap.get(DcMotor.class, "flm");
+                frm = hardwareMap.get(DcMotor.class, "frm");
+                blm = hardwareMap.get(DcMotor.class, "blm");
+                brm = hardwareMap.get(DcMotor.class, "brm");
+                // OTHER THAN MOVES:
+                lanceur = hardwareMap.get(DcMotor.class, "lnc");
+                moissoneuse = hardwareMap.get(DcMotor.class, "msn");
+                accroche = hardwareMap.get(DcMotor.class,"mnt");
+                accroche.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                WRRobot wr = new WRRobot(flm,frm,blm,brm);
+                waitForStart();
 
-        while (opModeIsActive()) {
-            x = gamepad1.left_stick_x;
-            y = -gamepad1.left_stick_y;
-            ga = gamepad1.a;
-            gy = gamepad1.y;
-            if(ga & !preva){
-                    ismoissonactive=!ismoissonactive;
-                    preva=true;
-            }
-            if(!ga & preva){
-                    preva =false;
-            }
-            if(ismoissonactive){
-                    moissonmotor.setPower(1);
-            }else{
-                    moissonmotor.setPower(0);
-            }
-            if(gy){
-                    launchermotor.setPower(1);
-            }else{
-                    launchermotor.setPower(0);
-            }
-            if (gamepad1.dpad_down){
-                    mountmotor.setPower(-1);
-            }else if (gamepad1.dpad_up){
-                    mountmotor.setPower(1);
-            }else{
-                    mountmotor.setPower(0);
-            }
-
-
-            g2x = gamepad1.right_stick_x;
-            wr.moves(x,y );
-            wr.Rotation(g2x );
+                while (opModeIsActive()) {
+                        telemetry.addData("Status", "Running");
+                        telemetry.update();
+                        x = gamepad1.left_stick_x;
+                        y = -gamepad1.left_stick_y;
+                        g2x = gamepad1.right_stick_x;
+                        wr.moves(x,y );
+                        wr.Rotation(g2x );
+                        // OTHER THAN MOVES:
+                        //             // bouton O
+                        if (gamepad1.b){
+                                if (!dejavu){
+                                        if (lanceurEnRoute){
+                                                lanceur.setPower(0.8);
+                                        }
+                                        else{
+                                                lanceur.setPower(0);
+                                        }
+                                        lanceurEnRoute=!lanceurEnRoute;
+                                        dejavu=true;
+                                }
+                        }
+                        else{
+                                dejavu = false;
+                        }
+                        //bouton X
+                        if (gamepad1.a){
+                                if (!dejavuM){
+                                        if (moissoneuseEnRoute){
+                                                moissoneuse.setPower(-1);
+                                        }
+                                              else{
+                                                moissoneuse.setPower(0);
+                                        }
+                                        moissoneuseEnRoute=!moissoneuseEnRoute;
+                                        dejavuM=true;
+                                }
+                        }
+                        else{
+                                dejavuM = false;
+                        }
+                        if (gamepad1.right_bumper){
+                                accroche.setPower(0.8);
+                        }
+                        else if (gamepad1.left_bumper)
+                        {
+                                accroche.setPower(-0.8);
+                        }
+                        else {
+                                if (!modeFrein){
+                                        accroche.setPower(0);
+                                }
+                        }
+                        if (gamepad1.ps){
+                                modeFrein = true;
+                                accroche.setPower(0.17);
+                        }
+                        puissanceMoissoneuse = moissoneuse.getPower();
+                        telemetry.addData("puissance moisso : ", puissanceMoissoneuse);
+                        telemetry.addData("dejavu :", dejavu);
+                }
         }
-    }
 }
 class WRRobot{
         private DcMotor flm;
@@ -175,3 +209,4 @@ class WRRobot{
 
 
 }
+
