@@ -42,6 +42,7 @@ public class WeRobot_FGC2023 extends LinearOpMode {
         private double puissancePanier2 = 0;
         private int targetPos;
         private Long targetPosLong;
+        private boolean servoPanierActivated = false;
 
         @Override
         public void runOpMode() throws InterruptedException {
@@ -70,7 +71,7 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                 accroche.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 WRRobot wr = new WRRobot(flm,frm,blm,brm,gamepad1);
                 servoPanier.setPosition(0.5);
-                servoAccroche.setPosition(0.5);
+                servoAccroche.setPosition(0.42);
                 waitForStart();
                 
                 
@@ -84,7 +85,7 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                         wr.Rotation(g2x );
                         // OTHER THAN MOVES:
                         if (gamepad1.dpad_up){
-                                if (!dejavu){
+                                if (!dejavu && !servoAccrocheEnRoute){
                                         // tick par seconde
                                         
                                         // panier1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -112,7 +113,7 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                                         
                                         
                                         
-                                        panierEnRoute=!panierEnRoute;
+                                        panierEnRoute=true;
                                         dejavu=true;
                                 }
                         }
@@ -120,7 +121,7 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                                 dejavu=false;
                         }
                         if (gamepad1.dpad_down){
-                              if (!dejavudown){
+                              if (!dejavudown && !servoPanierActivated){
                                 panier1.setVelocity(75);
                                 panier2.setVelocity(75);
                                 targetPosLong = (Long) Math.round(288*2.5);
@@ -143,6 +144,7 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                                                 servoPanier.setPosition(positions_to_go[i]);
                                         }
                                         dejavulb = true;
+                                        servoPanierActivated = true;
                                 }
                                 dejavulb = false;
                         }
@@ -150,8 +152,9 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                         //boutton rose
                         if(gamepad1.x){
                                 if(!dejavudl){
-                                        servoPanier.setPosition(0.37);
+                                        servoPanier.setPosition(0.32);
                                         dejavudl = true;
+                                        servoPanierActivated=false;
                                 }
                                 dejavudl = false;
                         }
@@ -169,12 +172,12 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                                                 servoAccroche.setPosition(0.15);
                                                 
                                         }
-                                        else {
+                                        else if(!panierEnRoute) {
                                                 /*double[] p_t_g = {0.3,0.325,0.35,0.375,0.4,0.425,0.45,0.5};
                                                 int[] t_t_s = {100,100,100,100,100,200,200,100};
                                                 for(int i = 0; i< p_t_g.length; i++){
                                                         Thread.sleep(t_t_s[i]);
-                                                        servoAccroche.setPosition(p_t_g[i]);
+                                                       servoAccroche.setPosition(p_t_g[i]);
                                                 }*/
                                                 servoAccroche.setPosition(0.5);
                                         }
@@ -206,7 +209,7 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                                 accroche.setPower(-0.8);
                         }
                         // bouton X
-                        else if (gamepad1.y){
+                        else if (gamepad1.y && !servoAccrocheEnRoute){
                                 accroche.setPower(0.8);
                         }
                         else {
@@ -221,16 +224,24 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                         puissanceMoissoneuse = moissoneuse.getPower();
                         puissancePanier1 = panier1.getPower();
                         puissancePanier2 = panier2.getPower();
-                        telemetry.addData("puissance moisso", puissanceMoissoneuse);
-                        telemetry.addData("angle servo", servoAccroche.getPosition());
-                        telemetry.addData("dejavu", dejavu);
-                        telemetry.addData("puissance panier1", puissancePanier1);
-                        telemetry.addData("puissance panier2", puissancePanier2);
-                        telemetry.addData("TUTORIEL","TUTORIEL");
+                        //telemetry.addData("puissance moisso", puissanceMoissoneuse);
+                        //telemetry.addData("angle servo", servoAccroche.getPosition());
+                        //telemetry.addData("dejavu", dejavu);
+                        //telemetry.addData("puissance panier1", puissancePanier1);
+                        //telemetry.addData("puissance panier2", puissancePanier2);
+                        telemetry.addData("TUTORIEL","");
                         telemetry.addData("Stick Gauche","Translations");
                         telemetry.addData("Stick Droit","Rotations");
                         telemetry.addData("X","Descendre Crochet");
                         telemetry.addData("Rond","Moissoneuse");
+                        telemetry.addData("Triangle","Monter le crochet");
+                        telemetry.addData("Carré","Panier en position réception");
+                        telemetry.addData("R1","Mettre le crochet en position");
+                        telemetry.addData("L1","Renverser le Panier");
+                        telemetry.addData("L2","Accélérer");
+                        telemetry.addData("Home","Bloquer le crochet");
+                        telemetry.addData("Flèche du haut","Monter le panier");
+                        telemetry.addData("Flèche du bas","Baisser le panier");
                 }
         }
 }
@@ -248,7 +259,7 @@ class WRRobot{
                 this.gamepad1 = gamepad1;
         }
         public  void moves(float x, double y){
-                double approx = 0.15;
+                double approx = 0.4;
                 boolean xnozero = (x<-approx || x>approx);
                 boolean ynozero = (y<-approx || y>approx);
 
@@ -325,7 +336,7 @@ class WRRobot{
          * @param g2x is the x coordinates of the right joystick
          */
         public  void Rotation(float g2x){
-                double approx = 0.15;
+                double approx = 0.4;
                 boolean xnozero = (g2x<-approx || g2x>approx);
                 double pow = gamepad1.left_trigger > 0.5?gamepad1.left_trigger:(gamepad1.right_trigger>0.5?0.2:0.4);
                 if (!xnozero) return;
