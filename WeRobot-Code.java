@@ -137,7 +137,7 @@ public class WeRobot_FGC2023 extends LinearOpMode {
                         
                         if (gamepad1.left_bumper){
                                 if(!dejavulb){
-                                        double[] positions_to_go = {0.5,0.6,0.7,0.8,0.825,0.85,0.875,0.9,0.95,1};
+                                        double[] positions_to_go = {0.5,0.6,0.7,0.8,0.825,0.85,0.875,0.9,0.95,0.98};
                                         int[] times_to_sleep = { 100,100,100,200,200,200,200,200,200,200,200,200,200,200};
                                         for(int i= 0; i < positions_to_go.length; i++){
                                                 Thread.sleep(times_to_sleep[i]);
